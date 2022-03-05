@@ -84,11 +84,10 @@ class cGAN:
                 self.genScaler.step(self.opt_gen)
                 self.genScaler.update()
 
-                print(f"Epoch = {epoch}, Batch = {_} / {config.batch_size}, generator loss = {gen_loss}, discriminator loss = {disc_loss}")
+            print(f"Epoch = {epoch}, generator loss = {gen_loss}, discriminator loss = {disc_loss}")
 
-                if _ % 200 == 0:
-                    save_image(fake_data_point1 * 0.5 + 0.5 ,f"./data/generated/data_point1_{_}.png")
-                    save_image(fake_data_point2 * 0.5 + 0.5 ,f"./data/generated/data_point2_{_}.png")
+            save_image(fake_data_point1 * 0.5 + 0.5 ,f"./data/generated/data_point1_{epoch}.png")
+            save_image(fake_data_point2 * 0.5 + 0.5 ,f"./data/generated/data_point2_{epoch}.png")
             self.save_checkpoint()
     def save_checkpoint(self):
         torch.save({
