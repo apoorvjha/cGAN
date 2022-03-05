@@ -25,7 +25,7 @@ class DataHandler:
     def preprocess(self,image,dimension=(64,64)):
         transforms=Compose([
             Resize(size=dimension),
-            Normalize(mean=(0.5,0.5,0.5),std=(0.5,0.5,0.5),inplace=False)
+            Normalize(mean=(0.5,0.5,0.5),std=(0.5,0.5,0.5),inplace=True)
         ])
         image=transforms(image)
         return image
