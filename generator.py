@@ -1,5 +1,6 @@
 import torch
 import torch.nn as nn
+from torch.cuda.amp import autocast
 
 class convLayer(nn.Module):
     def __init__(self,in_channels,out_channels,kernel_size,stride,sample_mode):
@@ -31,6 +32,7 @@ class convLayer(nn.Module):
                     nn.InstanceNorm2d(out_channels),
                     nn.ReLU(inplace=True)
                     )
+    @autocast()
     def forward(self,x):
         return self.layer(x)
         
@@ -98,6 +100,7 @@ class generator(nn.Module):
                         stride=1
                         )
                     ])
+    @autocast()
     def forward(self,x):
         for layer in self.Input:
             x=layer(x)
@@ -105,7 +108,8 @@ class generator(nn.Module):
             x=x+layer(x)
         for layer in self.Output:
             x=layer(x)
-        return torch.tanh(x)
+        image=torch.tanh(x)
+        return torch.nn.functional.pad(image,(4,4,4,4),'reflect')
 
 def test():
     genM=generator()

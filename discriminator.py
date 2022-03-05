@@ -1,5 +1,8 @@
 import torch
 import torch.nn as nn
+from torch.cuda.amp import autocast
+
+# Autocast is used to cast the operations to their compatible datatypes automatically.
 
 class Discriminator(nn.Module):
     def __init__(self,img_channels=3,n_hidden_layers=[64,128,256,512]):
@@ -36,6 +39,7 @@ class Discriminator(nn.Module):
                     padding_mode='reflect',bias=True)
                 )
         self.model=nn.Sequential(*hidden_layers)  # unfold the hidden_layers
+    @autocast()
     def forward(self,x):
         x=self.Input(x)
         x=self.model(x)
