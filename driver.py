@@ -48,8 +48,8 @@ class cGAN:
 
                 # Discriminator loss wrt datapoint2.
                 fake_data_point2=self.genM2(data_point1)
-                disc_data_point2_real=self.discM1(data_point2)
-                disc_data_point2_fake=self.discM1(fake_data_point2.detach()) # after detach the tensor is removed from computation graph and gradient tracking for it is not done.
+                disc_data_point2_real=self.discM2(data_point2)
+                disc_data_point2_fake=self.discM2(fake_data_point2.detach()) # after detach the tensor is removed from computation graph and gradient tracking for it is not done.
                 disc_data_point2_real_loss=self.mse(disc_data_point2_real,torch.ones_like(disc_data_point2_real))
                 disc_data_point2_fake_loss=self.mse(disc_data_point2_fake,torch.ones_like(disc_data_point2_fake))
                 disc_data_point2_loss=(disc_data_point2_real_loss + disc_data_point2_fake_loss)/2
@@ -84,10 +84,10 @@ class cGAN:
                 self.genScaler.step(self.opt_gen)
                 self.genScaler.update()
 
-            print(f"Epoch = {epoch}, generator loss = {gen_loss}, discriminator loss = {disc_loss}")
+            save_image(fake_data_point1 ,f"./data/generated/data_point1_{epoch}.png")
+            save_image(fake_data_point2 ,f"./data/generated/data_point2_{epoch}.png")
 
-            save_image(fake_data_point1 * 0.5 + 0.5 ,f"./data/generated/data_point1_{epoch}.png")
-            save_image(fake_data_point2 * 0.5 + 0.5 ,f"./data/generated/data_point2_{epoch}.png")
+            print(f"Epoch = {epoch}, generator loss = {gen_loss}, discriminator loss = {disc_loss}")
             self.save_checkpoint()
     def save_checkpoint(self):
         torch.save({
