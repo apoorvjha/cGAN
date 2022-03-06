@@ -77,7 +77,7 @@ class cGAN:
                 # Identity loss is not calculated (for efficiency)
 
                 # aggregate loss 
-                gen_loss=gen_data_point1_loss + gen_data_point2_loss + data_point1_cycle_loss + data_point2_cycle_loss
+                gen_loss=gen_data_point1_loss + gen_data_point2_loss + data_point1_cycle_loss * 10 + data_point2_cycle_loss * 10
 
                 self.opt_gen.zero_grad()
                 self.genScaler.scale(gen_loss).backward()
