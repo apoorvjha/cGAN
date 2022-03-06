@@ -29,7 +29,8 @@ class cGAN:
                 lr=config.learning_rate,
                 betas=(0.5,0.999)
                 )
-
+        if ('Generator_Model_1.tar.gz' in os.listdir('.') and 'Generator_Model_2.tar.gz' in os.listdir('.') and 'Discriminator_Model_1.tar.gz' in os.listdir('.') and 'Discriminator_Model_2.tar.gz' in os.listdir('.')):
+            self.load_checkpoint()
     def train(self):
         for epoch in range(config.epochs):
             for _,(data_point1,data_point2) in enumerate(self.dataLoader):
@@ -84,10 +85,11 @@ class cGAN:
                 self.genScaler.step(self.opt_gen)
                 self.genScaler.update()
 
-            save_image(fake_data_point1 ,f"./data/generated/data_point1_{epoch}.png")
-            save_image(fake_data_point2 ,f"./data/generated/data_point2_{epoch}.png")
+                if _ % 200==0:
+                    save_image(fake_data_point1 ,f"./data/generated/data_point1_{epoch}_{_}.png")
+                    save_image(fake_data_point2 ,f"./data/generated/data_point2_{epoch}_{_}.png")
 
-            print(f"Epoch = {epoch}, generator loss = {gen_loss}, discriminator loss = {disc_loss}")
+                    print(f"Epoch = {epoch}, generator loss = {gen_loss}, discriminator loss = {disc_loss}")
             self.save_checkpoint()
     def save_checkpoint(self):
         torch.save({
@@ -106,6 +108,25 @@ class cGAN:
             "state_dict" : self.discM2.state_dict(),
             "optimizer" : self.opt_disc.state_dict()
         },"Discriminator_Model_2.tar.gz")
+    def load_checkpoint(self):
+        ckpntG1=torch.load("Generator_Model_1.tar.gz",map_location=config.DEVICE)
+        ckpntG2=torch.load("Generator_Model_2.tar.gz",map_location=config.DEVICE)
+        ckpntD1=torch.load("Discriminator_Model_1.tar.gz",map_location=config.DEVICE)
+        ckpntD2=torch.load("Discriminator_Model_2.tar.gz",map_location=config.DEVICE)
+        self.genM1.load_state_dict(ckpntG1['state_dict'])
+        self.genM2.load_state_dict(ckpntG2['state_dict'])
+        self.discM1.load_state_dict(ckpntD1['state_dict'])
+        self.discM2.load_state_dict(ckpntD2['state_dict'])
+        self.opt_gen.load_state_dict(ckpntG1['optimizer'])
+        self.opt_disc.load_state_dict(ckpntD1['optimizer'])
+
+        for opt_param_group in self.opt_gen.param_groups:
+            opt_param_group['lr']=config.learning_rate
+        for opt_param_group in self.opt_disc.param_groups:
+            opt_param_group['lr']=config.learning_rate
+
+
+    
 
 if __name__=='__main__':
     cycleGAN=cGAN()
