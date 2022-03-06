@@ -22,7 +22,7 @@ class DataHandler:
         self.data_point2=array(self.data_point2)
         self.data_point1=self.preprocess(torch.Tensor(self.data_point1.reshape(-1,self.data_point1.shape[3],self.data_point1.shape[1],self.data_point1.shape[2])))
         self.data_point2=self.preprocess(torch.Tensor(self.data_point2.reshape(-1,self.data_point2.shape[3],self.data_point2.shape[1],self.data_point2.shape[2])))
-    def preprocess(self,image,dimension=(64,64)):
+    def preprocess(self,image,dimension=(256,256)):
         transforms=Compose([
             Resize(size=dimension),
             Normalize(mean=(0.5,0.5,0.5),std=(0.5,0.5,0.5),inplace=True)
